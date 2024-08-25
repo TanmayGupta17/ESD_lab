@@ -1,0 +1,22 @@
+	AREA RESET,DATA,READONLY
+	EXPORT __Vectors
+__Vectors
+	DCD 0X10001000
+	DCD Reset_Handler
+	ALIGN
+	AREA mycode,CODE,READONLY
+	ENTRY
+	EXPORT Reset_Handler
+Reset_Handler
+	; SUM = N*(N+1)/2
+	LDR R0,=N
+	LDR R5,=DST
+	LDR R1,[R0]		;N
+	ADD R2,R1,#1	;N+1
+	MLA R3,R1,R2,R4	;R3=(R1*R2)+R4
+	LSR R3, R3,#1	;DIVIDING BY 2
+	STR R3,[R5]
+N DCD 10
+	AREA mydata,DATA,READWRITE
+DST DCD 0
+	END
