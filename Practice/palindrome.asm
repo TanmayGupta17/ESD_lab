@@ -1,0 +1,51 @@
+	AREA RESET, DATA, READONLY
+	EXPORT __Vectors
+__Vectors
+    DCD 0X10001000
+    DCD Reset_Handler
+    ALIGN
+
+	AREA mycode, CODE, READONLY
+	ENTRY
+	EXPORT Reset_Handler
+Reset_Handler
+	LDR R0,=SRC
+	LDR R1,[R0]
+	LDR R2,=DST
+	MOV R3,#1
+	MOV R4,#8		;POINTING TO MSB
+	MOV R9,#2
+CHECK
+	MOV R5,R1
+
+EXTRACT
+	CMP R9,#0
+	BEQ EXIT2
+	AND R7,R5,#0XF		;EXTRACTING LSB
+	LDR R6,=0XF
+	LSL R6,R4
+	AND R8,R5,R6		;EXTRACTING MSB
+	LSR R8,R4
+	CMP R7,R8
+	BNE EXIT1
+	
+	LSR R5,#4
+	SUB R4,#8
+	SUB R9,#1
+	B EXTRACT
+	
+EXIT2
+	CMP R3,#1
+	STREQ R3,[R2]
+	B STOP
+	
+EXIT1
+	MOV R3,#0
+	STR R3,[R2]
+	
+STOP
+	B STOP
+SRC DCD 0XEFE              
+	AREA mydata, DATA, READWRITE
+DST DCD 0                ; Allocate memory for the result in DST
+	END
